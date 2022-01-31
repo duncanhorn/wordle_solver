@@ -1,0 +1,107 @@
+---
+BasedOnStyle: LLVM
+Language: Cpp
+AccessModifierOffset: -4 # 'public:' etc.
+AlignAfterOpenBracket: DontAlign # Indent wrapped lines with spaces, not relative to itself
+AlignConsecutiveMacros: false
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: Right
+AlignOperands: false
+AlignTrailingComments: false
+AllowAllArgumentsOnNextLine: false # TODO: Revisit
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false # TODO: Revisit
+# AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: Always
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: true # Allow multiple arguments on a single line
+BinPackParameters: true # Allow multiple parameters on a single line
+BraceWrapping:
+  AfterCaseLabel: false # E.g. 'case foo: {'
+  AfterClass: true
+  AfterControlStatement: true # if/for/while/etc.
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: false
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Custom
+# TODO: BreakBeforeInheritanceComma: false
+BreakInheritanceList: AfterColon
+BreakBeforeTernaryOperators: false
+# TODO: BreakConstructorInitializersBeforeComma: false
+BreakConstructorInitializers: AfterColon
+BreakStringLiterals: true # Split up long strings into string concatenations
+ColumnLimit: 120
+CompactNamespaces: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+Cpp11BracedListStyle: false
+# DeriveLineEnding: false
+DerivePointerAlignment: false
+FixNamespaceComments: false
+IncludeBlocks: Preserve
+IndentCaseLabels: false
+# IndentGotoLabels: false # Flush left
+IndentPPDirectives: None # Don't indent nested '#if' etc.
+IndentWidth: 4
+IndentWrappedFunctionNames: false # Align function names with return type
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: All
+PenaltyBreakAssignment: 2
+# TODO PenaltyBreakAssignment: 100 # Should ideally never break after the '='. TODO: Maybe okay/keep other statements in-tact?
+PenaltyBreakBeforeFirstCallParameter: 19 # NOTE: DEFAULT VALUE
+PenaltyBreakComment: 300
+# TODO PenaltyBreakComment: 10 # Prefer to keep comments in-tact, but not at the expense of absurd vertical whitespace
+PenaltyBreakFirstLessLess: 120
+# TODO PenaltyBreakFirstLessLess: 90 # Similar to assignment, but lower priority
+PenaltyBreakString: 1000
+# TODO PenaltyBreakString: 50 # Ideally keep strings in-tact, but splitting isn't the worst
+PenaltyBreakTemplateDeclaration: 10 # NOTE: DEFAULT VALUE
+PenaltyExcessCharacter: 1000000 # NOTE: DEFAULT VALUE
+PenaltyReturnTypeOnItsOwnLine: 60
+# TODO PenaltyReturnTypeOnItsOwnLine: 100 # Prefer to wrap parameters before wrapping function name
+PointerAlignment: Left # E.g. 'void* ptr'
+ReflowComments: true
+SortIncludes: true
+SortUsingDeclarations: true
+SpaceAfterCStyleCast: false # E.g. '(int)x'
+SpaceAfterLogicalNot: false # E.g. '!foo'
+SpaceAfterTemplateKeyword: true # E.g. 'template <'
+SpaceBeforeAssignmentOperators: true # E.g. 'x ='
+SpaceBeforeCpp11BracedList: false # E.g. 'Foo{ 42 }'
+SpaceBeforeCtorInitializerColon: true # E.g. 'Foo() : member(value)'
+SpaceBeforeInheritanceColon: true # E.g. 'class Foo : public Bar'
+SpaceBeforeParens: ControlStatements # E.g. 'if ('
+SpaceBeforeRangeBasedForLoopColon: true # E.g. 'for (auto v : list)'
+# SpaceInEmptyBlock: false # E.g. '{}'
+SpaceInEmptyParentheses: false # E.g. 'doit()'
+SpacesBeforeTrailingComments: 1 # E.g. 'doit(); // Do it'
+SpacesInAngles: false # E.g. 'static_cast<int>'
+# SpacesInConditionalStatement: false # E.g. 'if (cond)'
+SpacesInContainerLiterals: true
+SpacesInCStyleCastParentheses: false # E.g. '(int)x'
+SpacesInParentheses: false # E.g. 'doit(a, b, c)'
+SpacesInSquareBrackets: false # E.g. 'int arr[42]'
+# SpaceBeforeSquareBrackets: false # E.g. 'int arr[42]'
+# Standard: Latest
+TabWidth: 4
+# UseCRLF: false
+UseTab: Never
