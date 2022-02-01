@@ -1,4 +1,5 @@
 @echo off
+setlocal
 setlocal EnableDelayedExpansion
 
 set BUILD_ROOT=%~dp0\..\build
