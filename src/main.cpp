@@ -9,6 +9,8 @@
 #include <string>
 #include <thread>
 
+using namespace std::literals;
+
 // NOTE: This is a macro so that we don't have to constantly deal with type cast warnings
 #define WORD_LENGTH 5
 
@@ -192,20 +194,26 @@ static std::size_t word_min_removed(const game_state& state, const dictionary_en
     return result;
 }
 
+static std::size_t find_word(std::string_view word)
+{
+    auto itr = std::find_if(dictionary.begin(), dictionary.end(), [&](const auto& entry) {
+        return entry.letter_masks[0] == (0x01 << (word[0] - 'A')) &&
+            entry.letter_masks[1] == (0x01 << (word[1] - 'A')) &&
+            entry.letter_masks[2] == (0x01 << (word[2] - 'A')) &&
+            entry.letter_masks[3] == (0x01 << (word[3] - 'A')) &&
+            entry.letter_masks[4] == (0x01 << (word[4] - 'A'));
+    });
+    return itr - dictionary.begin();
+}
+
 static std::pair<std::size_t, std::size_t> select_word(game_state& state)
 {
     // If this is the first iteration, we already know the best word, so optimize
 #if 1
     if (state.letter_masks[0] == ((0x01 << 26) - 1))
     {
-        auto itr = std::find_if(dictionary.begin(), dictionary.end(), [&](const auto& entry) {
-            return entry.letter_masks[0] == (0x01 << ('S' - 'A')) &&
-                entry.letter_masks[1] == (0x01 << ('E' - 'A')) &&
-                entry.letter_masks[2] == (0x01 << ('R' - 'A')) &&
-                entry.letter_masks[3] == (0x01 << ('A' - 'A')) &&
-                entry.letter_masks[4] == (0x01 << ('I' - 'A'));
-        });
-        return { itr - dictionary.begin(), word_min_removed(state, *itr) };
+        auto result = find_word("SERAI"sv);
+        return { result, word_min_removed(state, dictionary[result]) };
     }
 #endif
 
@@ -293,6 +301,7 @@ results. The key is below:
 There are also a few additional commands you can execute:
 
     list    This will list all remaining words in the dictionary
+    custom  Allows you to enter a custom word to submit
 
 )^-^");
 
@@ -301,13 +310,15 @@ There are also a few additional commands you can execute:
     {
         std::printf("There are %zu words left in the dictionary\n", dictionary_size);
         auto [index, minRemove] = select_word(state);
-        std::printf("Submit this word: ");
-        print_word(dictionary[index]);
-        std::printf("   [Reduces the dictionary size by at least %zu]\n", minRemove);
+        auto word = &dictionary[index];
 
         while (true)
         {
-            std::printf("Result:           ");
+            std::printf("Submit this word: ");
+            print_word(*word);
+            std::printf("   [Reduces the dictionary size by at least %zu]\n", minRemove);
+
+            std::printf("Result/command:   ");
             if (!std::getline(std::cin, line)) return 1;
             for (auto& ch : line)
             {
@@ -327,6 +338,32 @@ There are also a few additional commands you can execute:
                 }
                 std::printf("\n");
 
+                continue;
+            }
+            else if (line == "CUSTOM")
+            {
+                std::printf("Custom word:      ");
+                if (!std::getline(std::cin, line)) return 1;
+                for (auto& ch : line)
+                {
+                    if ((ch >= 'a') && (ch <= 'z')) ch = ch - 'a' + 'A';
+                }
+
+                if (line.size() != WORD_LENGTH)
+                {
+                    std::printf("ERROR: Invalid word length\n");
+                    continue;
+                }
+
+                auto pos = find_word(line);
+                if (pos == dictionary.size())
+                {
+                    std::printf("ERROR: The word was not found in the dictionary\n");
+                    continue;
+                }
+
+                word = &dictionary[pos];
+                minRemove = word_min_removed(state, *word);
                 continue;
             }
             else if (line.size() != WORD_LENGTH)
@@ -367,7 +404,7 @@ There are also a few additional commands you can execute:
             if (badInput) continue;
             done = allCorrect;
 
-            state = apply(state, dictionary[index], feedback);
+            state = apply(state, *word, feedback);
             prune_dictionary(state);
             break;
         }
