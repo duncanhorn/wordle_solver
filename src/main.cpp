@@ -192,7 +192,7 @@ static std::size_t word_min_removed(const game_state& state, const dictionary_en
     return result;
 }
 
-static std::size_t select_word(game_state& state)
+static std::pair<std::size_t, std::size_t> select_word(game_state& state)
 {
     // If this is the first iteration, we already know the best word, so optimize
 #if 1
@@ -205,7 +205,7 @@ static std::size_t select_word(game_state& state)
                 entry.letter_masks[3] == (0x01 << ('A' - 'A')) &&
                 entry.letter_masks[4] == (0x01 << ('I' - 'A'));
         });
-        return itr - dictionary.begin();
+        return { itr - dictionary.begin(), word_min_removed(state, *itr) };
     }
 #endif
 
@@ -248,9 +248,7 @@ static std::size_t select_word(game_state& state)
         }
     }
 
-    std::printf("This word is guaranteed to reduce dictionary size by at least %zu\n", mostRemoved);
-
-    return result;
+    return { result, mostRemoved };
 }
 
 static void print_word(const dictionary_entry& entry)
@@ -302,10 +300,10 @@ There are also a few additional commands you can execute:
     for (bool done = false; !done; )
     {
         std::printf("There are %zu words left in the dictionary\n", dictionary_size);
-        auto index = select_word(state);
+        auto [index, minRemove] = select_word(state);
         std::printf("Submit this word: ");
         print_word(dictionary[index]);
-        std::printf("\n");
+        std::printf("   [Reduces the dictionary size by at least %zu]\n", minRemove);
 
         while (true)
         {
@@ -325,6 +323,7 @@ There are also a few additional commands you can execute:
                     std::printf("%s", prefix);
                     prefix = ", ";
                     print_word(dictionary[i]);
+                    std::printf("(%zu)", word_min_removed(state, dictionary[i]));
                 }
                 std::printf("\n");
 
