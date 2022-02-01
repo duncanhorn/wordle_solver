@@ -195,17 +195,19 @@ static std::size_t word_min_removed(const game_state& state, const dictionary_en
 static std::size_t select_word(game_state& state)
 {
     // If this is the first iteration, we already know the best word, so optimize
-    // if (state.letter_masks[0] == ((0x01 << 26) - 1))
-    // {
-    //     auto itr = std::find_if(dictionary.begin(), dictionary.end(), [&](const auto& entry) {
-    //         return entry.letter_masks[0] == (0x01 << ('S' - 'A')) &&
-    //             entry.letter_masks[1] == (0x01 << ('E' - 'A')) &&
-    //             entry.letter_masks[2] == (0x01 << ('R' - 'A')) &&
-    //             entry.letter_masks[3] == (0x01 << ('A' - 'A')) &&
-    //             entry.letter_masks[4] == (0x01 << ('I' - 'A'));
-    //     });
-    //     return itr - dictionary.begin();
-    // }
+#if 1
+    if (state.letter_masks[0] == ((0x01 << 26) - 1))
+    {
+        auto itr = std::find_if(dictionary.begin(), dictionary.end(), [&](const auto& entry) {
+            return entry.letter_masks[0] == (0x01 << ('S' - 'A')) &&
+                entry.letter_masks[1] == (0x01 << ('E' - 'A')) &&
+                entry.letter_masks[2] == (0x01 << ('R' - 'A')) &&
+                entry.letter_masks[3] == (0x01 << ('A' - 'A')) &&
+                entry.letter_masks[4] == (0x01 << ('I' - 'A'));
+        });
+        return itr - dictionary.begin();
+    }
+#endif
 
     // Check every word in the dictionary to see which one is guaranteed to reduce the set down the most
     auto threadCount = std::thread::hardware_concurrency();
