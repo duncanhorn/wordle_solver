@@ -56,12 +56,12 @@ struct game_state
 std::vector<dictionary_entry> dictionary;
 std::size_t dictionary_size; // We don't remove things from the dictionary vector, hence the second length
 
-static std::filesystem::path find_dictionary_path()
+static std::filesystem::path find_dictionary_path(const wchar_t* filename)
 {
     auto path = std::filesystem::current_path();
     while (true)
     {
-        auto testPath = path / L"dictionary.txt";
+        auto testPath = path / filename;
         if (std::filesystem::exists(testPath))
         {
             return testPath;
@@ -209,13 +209,14 @@ static std::size_t find_word(std::string_view word)
 static std::pair<std::size_t, std::size_t> select_word(game_state& state)
 {
     // If this is the first iteration, we already know the best word, so optimize
-#if 1
-    if (state.letter_masks[0] == ((0x01 << 26) - 1))
+    if (dictionary.size() == dictionary_size)
     {
-        auto result = find_word("SERAI"sv);
-        return { result, word_min_removed(state, dictionary[result]) };
+        if (dictionary.size() == 12972)
+        {
+            auto result = find_word("SERAI"sv);
+            return { result, word_min_removed(state, dictionary[result]) };
+        }
     }
-#endif
 
     // Check every word in the dictionary to see which one is guaranteed to reduce the set down the most
     auto threadCount = std::thread::hardware_concurrency();
@@ -267,9 +268,26 @@ static void print_word(const dictionary_entry& entry)
     }
 }
 
-int main()
+static void capitalize(std::string& str)
 {
-    auto dictPath = find_dictionary_path();
+    for (auto& ch : str)
+    {
+        if ((ch >= 'a') && (ch <= 'z')) ch = ch - 'a' + 'A';
+    }
+}
+
+int main(int argc, const char** argv)
+{
+    const wchar_t* dictName = L"dictionary.large.txt";
+    if (argc > 1)
+    {
+        if (argv[1] == "--small"sv)
+        {
+            dictName = L"dictionary.small.txt";
+        }
+    }
+
+    auto dictPath = find_dictionary_path(dictName);
     if (!dictPath.has_filename())
     {
         std::printf("ERROR: Unable to find dictionary file. Ensure that the working directory is set correctly\n");
@@ -320,10 +338,7 @@ There are also a few additional commands you can execute:
 
             std::printf("Result/command:   ");
             if (!std::getline(std::cin, line)) return 1;
-            for (auto& ch : line)
-            {
-                if ((ch >= 'a') && (ch <= 'z')) ch = ch - 'a' + 'A';
-            }
+            capitalize(line);
 
             if (line == "LIST")
             {
@@ -344,10 +359,7 @@ There are also a few additional commands you can execute:
             {
                 std::printf("Custom word:      ");
                 if (!std::getline(std::cin, line)) return 1;
-                for (auto& ch : line)
-                {
-                    if ((ch >= 'a') && (ch <= 'z')) ch = ch - 'a' + 'A';
-                }
+                capitalize(line);
 
                 if (line.size() != WORD_LENGTH)
                 {
